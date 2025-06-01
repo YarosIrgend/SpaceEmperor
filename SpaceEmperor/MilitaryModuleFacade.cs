@@ -14,18 +14,8 @@ public class MilitaryModuleFacade
         _module.BuildShip(player);
     }
 
-    public void RepairShips(List<Ship> ships)
+    public void RepairShips(Player player)
     {
-        foreach (var ship in ships)
-        {
-            if (ship.MaxHp - ship.HP < _module.HPRepair)
-            {
-                ship.HP = ship.MaxHp;
-            }
-            else
-            {
-                ship.HP += _module.HPRepair;
-            }
-        }
+        _module.RepairShips(player);
     }
 }

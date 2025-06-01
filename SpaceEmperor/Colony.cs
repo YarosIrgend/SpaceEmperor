@@ -29,8 +29,6 @@ public class Colony
 
         Modules[moduleIndex].Upgrade(ref player);
     }
-
-    
     public void DisplayInfo()
     {
         Console.WriteLine("Колонія:");

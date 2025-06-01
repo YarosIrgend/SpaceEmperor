@@ -11,7 +11,7 @@ public class ColonyBuilder
         _player = player;
     }
 
-    private bool TryBuildModule(ColonyModule module)
+    private void TryBuildModule(ColonyModule module)
     {
         if (_player.Money >= module.BuildCostMoney && _player.Raw >= module.BuildCostRaw)
         {
@@ -19,31 +19,26 @@ public class ColonyBuilder
             _player.Raw -= module.BuildCostRaw;
             _colony.Modules.Add(module);
             Console.WriteLine($"{module.Name} побудовано. Залишок: {_player.Money}₴, {_player.Raw}🔧");
-            return true;
         }
         else
         {
             Console.WriteLine($"Недостатньо ресурсів для побудови {module.Name}!");
-            return false;
         }
     }
 
-    public ColonyBuilder AddHousing()
+    public void AddHousing()
     {
         TryBuildModule(new HousingModule());
-        return this;
     }
 
-    public ColonyBuilder AddIndustry()
+    public void AddIndustry()
     {
         TryBuildModule(new IndustrialModule());
-        return this;
     }
 
-    public ColonyBuilder AddMilitary()
+    public void AddMilitary()
     {
         TryBuildModule(new MilitaryModule());
-        return this;
     }
 }
 

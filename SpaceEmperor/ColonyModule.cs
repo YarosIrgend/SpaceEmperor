@@ -13,7 +13,7 @@ public abstract class ColonyModule
 
     public virtual bool AllowsShipyard => false;
 
-    public virtual void Upgrade(ref Player player)
+    public void Upgrade(ref Player player)
     {
         if (Level >= 3)
         {
@@ -143,6 +143,21 @@ public class MilitaryModule : ColonyModule
             default:
                 Console.WriteLine("Не той ввід");
                 break;
+        }
+    }
+
+    public void RepairShips(Player player)
+    {
+        foreach (var ship in player.Ships)
+        {
+            if (ship.MaxHp - ship.HP < HPRepair)
+            {
+                ship.HP = ship.MaxHp;
+            }
+            else
+            {
+                ship.HP += HPRepair;
+            }
         }
     }
 }

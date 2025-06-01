@@ -220,7 +220,7 @@ void ShipsRepair()
             if (militaryModule != null)
             {
                 var facade = new MilitaryModuleFacade(militaryModule);
-                facade.RepairShips(player.Ships);
+                facade.RepairShips(player);
             }
         }
     }
