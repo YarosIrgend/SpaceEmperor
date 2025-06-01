@@ -8,7 +8,19 @@ public class PlanetSystem(string starName, List<Planet> planets)
 
     public void AssignNeighbours(List<PlanetSystem> systems)
     {
-        Neighbours = systems;
+        if (Neighbours == null)
+        {
+            Neighbours = new List<PlanetSystem>();
+        }
+        foreach (var system in systems)
+        {
+            Neighbours.Add(system);
+            if (system.Neighbours == null)
+            {
+                system.Neighbours = new List<PlanetSystem>();
+            }
+            system.Neighbours.Add(this);
+        }
     }
 
     public void DisplayInfo()

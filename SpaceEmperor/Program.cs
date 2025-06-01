@@ -1,8 +1,10 @@
 ﻿using SpaceEmperor;
 
+// початковий Всесвіт
 Planet earth = new Planet("Земля", true, null, null, null);
-Planet venus = new Planet("Венера", false, null, [new(30, 10, 30), new(30, 10, 30)], new AllOnOneDefense());
-Planet mars = new Planet("Марс", false, null, null, new AllOnOneDefense());
+Planet venus = new Planet("Венера", false, null, [new(30, 10, 30), new(30, 10, 30)], new DistributedDefense());
+Planet mars = new Planet("Марс", false, null, [new(30, 10, 30), new(30, 10, 30), new(30, 10, 30)],
+    new AllOnOneDefense());
 
 PlanetSystem sun = new PlanetSystem("Сонце", [earth, venus, mars]);
 
@@ -13,13 +15,35 @@ Colony earthColony = new Colony(new List<ColonyModule>
     { new HousingModule(), new IndustrialModule(), new MilitaryModule() }, player);
 earth.SetColony(earthColony);
 
-Planet newFives = new Planet("Нові Фіви", false, null, [new(60, 20, 30), new(30, 10, 30)], new AllOnOneDefense());
-Planet orlenon = new Planet("Орленон", false, null, [new(60, 20, 30), new(30, 10, 30)], new DistributedDefense());
-PlanetSystem betelgeuse = new PlanetSystem("Бетельгейзе", [newFives, orlenon]);
-sun.AssignNeighbours(new List<PlanetSystem>{betelgeuse});
-betelgeuse.AssignNeighbours(new List<PlanetSystem>{sun});
+Planet newFives = new Planet("Елінія", false, null, [new(60, 20, 30), new(30, 10, 30)], new AllOnOneDefense());
+Planet big_cotel =
+    new Planet("Великий котел", false, null, [new(60, 20, 30), new(30, 10, 30)], new DistributedDefense());
+PlanetSystem betelgeuse = new PlanetSystem("Бетельгейзе", [newFives, big_cotel]);
 
-List<PlanetSystem> planetSystems = [sun, betelgeuse];
+Planet new_fivs = new Planet("Нові Фіви", false, null, [new(60, 20, 60), new(30, 10, 30)], new AllOnOneDefense());
+Planet orlenon = new Planet("Орленон", false, null, [new(60, 20, 60), new(30, 10, 30)], new DistributedDefense());
+Planet upsalaVega =
+    new Planet("Упсала-вега", false, null, [new(60, 20, 60), new(60, 20, 60)], new DistributedDefense());
+PlanetSystem kefron = new PlanetSystem("Кефрон", [newFives, big_cotel, upsalaVega]);
+
+Planet igmeyrish = new Planet("Ігмейріш", false, null, [new(90, 30, 90), new(60, 20, 60)], new AllOnOneDefense());
+Planet inklada = new Planet("Інклада", false, null, [new(90, 30, 90), new(60, 20, 60), new(90, 20, 90)],
+    new DistributedDefense());
+PlanetSystem rigel = new PlanetSystem("Рігель", [igmeyrish, inklada]);
+
+Planet rooka = new Planet("Роока", false, null, [new(90, 30, 90), new(60, 20, 60)], new AllOnOneDefense());
+Planet oyder_amarod = new Planet("Ойдер-Амарод", false, null,
+    [new(90, 30, 90), new(60, 20, 60), new(90, 30, 90), new(30, 10, 30)], new AllOnOneDefense());
+Planet menekato =
+    new Planet("Менекато", false, null, [new(90, 30, 90), new(90, 30, 90),new(30, 10, 30)], new AllOnOneDefense());
+PlanetSystem menkar = new PlanetSystem("Менкар", [igmeyrish, inklada,menekato]);
+
+List<PlanetSystem> planetSystems = [sun, betelgeuse, kefron, rigel, menkar];
+
+sun.AssignNeighbours(new List<PlanetSystem> { betelgeuse, kefron });
+betelgeuse.AssignNeighbours(new List<PlanetSystem> { kefron, rigel });
+kefron.AssignNeighbours(new List<PlanetSystem> { menkar });
+
 
 // ігровий процес
 Console.OutputEncoding = System.Text.Encoding.UTF8;
@@ -48,11 +72,12 @@ do
         Console.WriteLine("2 - Здійснити виліт");
         Console.WriteLine("3 - Переглянути гравця");
         Console.WriteLine("4 - Закінчити день");
+        Console.WriteLine("5 - Керування кораблями");
         if (player.CurrentPlanet.Colony != null)
         {
             if (player.CurrentPlanet.Colony.HasShipyard)
             {
-                Console.WriteLine("5 - Будувати кораблі");
+                Console.WriteLine("6 - Будувати кораблі");
             }
         }
 
@@ -78,6 +103,9 @@ do
                 ShipsRepair();
                 break;
             case 5:
+                ManageShips();
+                break;
+            case 6:
                 BuildShip();
                 break;
         }
@@ -93,6 +121,7 @@ do
         Console.WriteLine("2 - Здійснити гіперстрибок в іншу систему");
         Console.WriteLine("3 - Переглянути гравця");
         Console.WriteLine("4 - Закінчити день");
+        Console.WriteLine("5 - Керувати кораблями");
         userChoice = int.Parse(Console.ReadLine());
 
         switch (userChoice)
@@ -111,6 +140,9 @@ do
                 break;
             case 4:
                 EndDay();
+                break;
+            case 5:
+                ManageShips();
                 break;
         }
 
@@ -147,7 +179,7 @@ void BuildColony()
         Console.Clear();
         colony.DisplayInfo();
         Console.WriteLine("\nЩо бажаєте зробити?");
-        Console.WriteLine($"1 - Побудувати житловий модуль (Вартість: 100₴, 15🔧)");
+        Console.WriteLine("1 - Побудувати житловий модуль (Вартість: 100₴, 15🔧)");
         Console.WriteLine("2 - Побудувати промисловий модуль (Вартість: 60₴, 40🔧)");
         Console.WriteLine("3 - Побудувати військовий модуль (Вартість: 80₴, 70🔧)");
         Console.WriteLine("4 - Покращити модуль");
@@ -198,6 +230,7 @@ void BuildColony()
                 {
                     Console.WriteLine("Невірний ввід.");
                 }
+
                 break;
 
             default:
@@ -239,6 +272,54 @@ void BuildShip()
     }
 }
 
+void ManageShips()
+{
+    if (player.Ships == null || player.Ships.Count == 0)
+    {
+        Console.WriteLine("Нема кораблів");
+        Console.Clear();
+        return;
+    }
+
+    int continueChoice = 0;
+    do
+    {
+        Console.Clear();
+        Console.WriteLine("Список кораблів:");
+        for (int i = 0; i < player.Ships.Count; i++)
+        {
+            Console.WriteLine($"{i + 1} - HP: {player.Ships[i].HP}, Attack: {player.Ships[i].Attack}");
+        }
+
+        Console.WriteLine("Оберіть номер корабля, який хочете перемістити: ");
+        if (!int.TryParse(Console.ReadLine(), out int currentShipPlace) ||
+            currentShipPlace < 1 || currentShipPlace > player.Ships.Count)
+        {
+            Console.WriteLine("Неправильний ввід.");
+            continue;
+        }
+
+        Console.WriteLine("Оберіть позицію, куди його перемістити: ");
+        if (!int.TryParse(Console.ReadLine(), out int wantedShipPlace) ||
+            wantedShipPlace < 1 || wantedShipPlace > player.Ships.Count)
+        {
+            Console.WriteLine("Неправильний ввід.");
+            continue;
+        }
+
+        int fromIndex = currentShipPlace - 1;
+        int toIndex = wantedShipPlace - 1;
+
+        var shipToMove = player.Ships[fromIndex];
+        player.Ships.RemoveAt(fromIndex);
+
+        player.Ships.Insert(toIndex, shipToMove);
+        Console.WriteLine("Корабель переміщено.");
+
+        Console.WriteLine("Ще міняти? (0 - ні, інше число - так): ");
+        continueChoice = int.Parse(Console.ReadLine());
+    } while (continueChoice != 0);
+}
 
 void CaptureOrSitPlanet()
 {
@@ -286,7 +367,7 @@ void CaptureOrSitPlanet()
             EndDay();
             return;
         }
-        
+
         // Атака гравця
         for (int i = 0; i < playerShips.Count; i++)
         {
@@ -295,10 +376,11 @@ void CaptureOrSitPlanet()
             defender.HP -= attacker.Attack;
             defender.HP = Math.Max(0, defender.HP);
         }
+
         // оборона планети
-        planetToLand.DefenseStrategy.Defense(planetShips, playerShips); 
-        
-        
+        planetToLand.DefenseStrategy.Defense(planetShips, playerShips);
+
+
         // Якщо ворог повністю знищений
         if (planetShips.Count == 0)
         {
@@ -306,12 +388,12 @@ void CaptureOrSitPlanet()
             planetToLand.Ships = null;
             player.CurrentPlanet = planetToLand;
             player.CurrentPlanet.DefenseStrategy = null;
-            
+
             Console.ForegroundColor = ConsoleColor.Cyan;
             Console.WriteLine("Флот ворога розбитий");
             Console.ResetColor();
         }
-        
+
         if (playerShips.Count == 0)
         {
             Console.ForegroundColor = ConsoleColor.Red;
@@ -332,6 +414,7 @@ void DoHyperjump()
     {
         Console.WriteLine($"{choice} - {planetSystem.StarName}");
     }
+
     int userSystemChoice = int.Parse(Console.ReadLine());
 
     PlanetSystem planetSystemToJump = null;
@@ -350,5 +433,6 @@ void DoHyperjump()
         Console.WriteLine("Здійсненюється гіперстрибок...");
         Thread.Sleep(1500);
     }
+
     EndDay();
 }
